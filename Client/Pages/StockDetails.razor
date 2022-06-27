@@ -70,18 +70,15 @@
                 <ContentTemplate>
                     <div class="article-container">
                         <ul>
-                            @for (int i = 0; i < 5; i++)
+                            @for (int i = 0; i < Articles.Count; i++)
                             {
-                                if (i == Articles.Count)
-                                {
-                                    <li>
-                                        <article>
-                                            <h5><a href="@Articles[i].article_url">@Articles[i].title</a></h5>
-                                            <img class="article-img" src="@Articles[i].image_url" alt="IMG" />
-                                            <p class="article-text">@Articles[i].description</p>
-                                        </article>
-                                    </li>
-                                }
+                                <li>
+                                    <article>
+                                        <h5><a href="@Articles[i].article_url">@Articles[i].title</a></h5>
+                                        <img class="article-img" src="@Articles[i].image_url" alt="IMG" />
+                                        <p class="article-text">@Articles[i].description</p>
+                                    </article>
+                                </li>
                             }
                         </ul>
                     </div>

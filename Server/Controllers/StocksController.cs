@@ -59,7 +59,7 @@ namespace Server.Controllers
             }
             if (await _sharedService.CheckIfStockExists(stock.ticker))
             {
-                return NotFound("Stock already exists in database");
+                return Conflict("Stock already exists in database");
             }
 
             await _sharedService.CreateAsync(new DbStock
