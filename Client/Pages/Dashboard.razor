@@ -1,0 +1,122 @@
+@page "/dashboard"
+@inject HttpClient http
+@inject AuthenticationStateProvider auth
+@inject NavigationManager navigator
+@inject IStockService stockService
+@inject IPriceService priceService
+@inject IArticleService articlesService
+
+<style>
+    .primary_exchange {
+        text-align: right;
+    }
+</style>
+
+<SfAutoComplete @ref="AutoCompleteObj" TValue="string" TItem="Stock" Placeholder="e.g TSL" AllowFiltering="true"
+    DataSource="@stocks" Width="400px">
+    <AutoCompleteTemplates TItem="Stock">
+        <ItemTemplate>
+            <span class="item">
+                <span class="ticker">@((context as Stock).ticker)</span>
+                <span class="primary-exchange">@((context as Stock).primary_exchange)</span>
+            </span>
+        </ItemTemplate>
+        <HeaderTemplate>
+            <span class="head"><span class="ticker">Ticker</span><span class="primary-exchange">Primary
+                    Exchange</span></span>
+        </HeaderTemplate>
+    </AutoCompleteTemplates>
+    <AutoCompleteEvents TItem="Stock" TValue="string" Filtering="@Type" OnValueSelect="@GetDetails">
+    </AutoCompleteEvents>
+    <AutoCompleteFieldSettings Value="ticker"></AutoCompleteFieldSettings>
+</SfAutoComplete>
+@if (selectedStock is not null && stockPrices is not null)
+{
+    <StockDetails stock="@selectedStock" stockPrices="@stockPrices" navigator="@navigator" Articles="@articles" />
+}
+else
+{
+    <SfButton CssClass="e-custom-watchlist" @onclick="GoToWatchlist">WATCHLIST
+</SfButton>
+}
+
+<style>
+    .head,
+    .item {
+        display: table;
+        width: 100%;
+        margin: auto;
+    }
+
+    .head {
+        height: 40px;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    .ticker,
+    .primary-exchange {
+        display: table-cell;
+        vertical-align: middle;
+        width: 50%;
+    }
+
+    .primary-exchange {
+        position: absolute;
+        right: 15px;
+    }
+
+    .head .ticker {
+        text-indent: 16px;
+    }
+</style>
+
+
+
+@code {
+    protected async override Task OnInitializedAsync()
+    {
+        var authState = await auth.GetAuthenticationStateAsync();
+        user = authState.User.Identity.Name;
+        StockChosen = false;
+    }
+
+    public string user;
+    public bool StockChosen;
+    public List<Stock> stocks { get; set; }
+    public List<PriceDTO> stockPrices { get; set; }
+    public List<ArticleDTO> articles { get; set; }
+    public StockDetailsDTO selectedStock { get; set; }
+    SfAutoComplete<string, Stock> AutoCompleteObj;
+    public async void GetDetails(SelectEventArgs<Stock> args)
+    {
+        selectedStock = await stockService.GetStockDetailsByTicker(args.ItemData.ticker);
+        stockPrices = await priceService.GetPricesForStock(args.ItemData.ticker);
+        articles = await articlesService.GetArticlesByTicker(args.ItemData.ticker);
+        AddKeyToImg();
+        await stockService.AddStockToDatabase(selectedStock);
+        await priceService.AddStockPricesToDatabase(stockPrices, selectedStock.ticker);
+        await articlesService.AddArticlesToDatabase(articles, selectedStock.ticker);
+        StateHasChanged();
+    }
+    public async void Type(FilteringEventArgs args)
+    {
+        if (args.Text != "") stocks = await stockService.GetStocksListByTicker(args.Text);
+        var query = new Query().Select(new List<string> { "ticker" }).Where("ticker", "startswith", args.Text, true);
+        await AutoCompleteObj.FilterAsync(stocks, query);
+        await AutoCompleteObj.RefreshDataAsync();
+    }
+
+    public void GoToWatchlist()
+    {
+        navigator.NavigateTo("/watchlist");
+    }
+
+    public void AddKeyToImg()
+    {
+        if (selectedStock.branding != null)
+        {
+            selectedStock.branding.logo_url += "?apiKey=3hZzmHuqOO0DqsFAtAR8Uva4sLW1tsHu";
+        }
+    }
+}

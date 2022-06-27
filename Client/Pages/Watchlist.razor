@@ -1,0 +1,64 @@
+@inject IWatchlistService watchlistService
+@inject AuthenticationStateProvider auth
+@inject NavigationManager navigator
+
+@page "/watchlist/"
+
+<SfGrid @ref="SfGridObj" DataSource="@UserWatchlist" AllowSorting="true">
+    <GridEditSettings AllowAdding="true" AllowDeleting="true"></GridEditSettings>
+    <GridEvents CommandClicked="RemoveFromWatchlist" TValue="StockDetailsDTO"></GridEvents>
+    <GridColumns>
+        <GridColumn Field=@nameof(StockDetailsDTO.name) HeaderText="Name" TextAlign="TextAlign.Center" Width="300">
+        </GridColumn>
+        <GridColumn Field=@nameof(StockDetailsDTO.ticker) HeaderText="Symbol" TextAlign="TextAlign.Center" Width="300">
+        </GridColumn>
+        <GridColumn Field=@nameof(StockDetailsDTO.primary_exchange) HeaderText="Primary Exchange"
+            TextAlign="TextAlign.Center" Width="300">
+        </GridColumn>
+        <GridColumn HeaderText="Remove">
+            <GridCommandColumns>
+                <GridCommandColumn ButtonOption="@(new CommandButtonOptions() { IconCss = "e-icons e-cancel"})">
+                </GridCommandColumn>
+            </GridCommandColumns>
+        </GridColumn>
+    </GridColumns>
+</SfGrid>
+
+<SfButton CssClass="e-custom-back" @ref="NavButton" @onclick="GoToDashboard">Go back to dashboard</SfButton>
+
+
+<style>
+    .e-custom-back {
+        margin-top: 40px;
+        display: block;
+    }
+
+    .e-row.e-altrow {
+        background-color: #c4c4c4;
+    }
+</style>
+
+
+@code {
+    public List<StockDetailsDTO> UserWatchlist { get; set; }
+    SfButton NavButton;
+    SfGrid<StockDetailsDTO> SfGridObj;
+
+    protected override async Task OnInitializedAsync()
+    {
+        UserWatchlist = await watchlistService.RequestUserWatchlist();
+    }
+
+    public async void RemoveFromWatchlist(CommandClickEventArgs<StockDetailsDTO> args)
+    {
+
+        await watchlistService.RemoveFromWatchlist(args.RowData);
+        UserWatchlist = await watchlistService.RequestUserWatchlist();
+        await SfGridObj.Refresh();
+    }
+
+    public void GoToDashboard()
+    {
+        navigator.NavigateTo("/dashboard");
+    }
+}
