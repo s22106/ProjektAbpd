@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Client.Helper;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ProjektAbpd.Client.Helper;
@@ -42,12 +43,17 @@ namespace ProjektAbpd.Client.Services
             }
             catch (HttpRequestException)
             {
-                uri = $"/api/articles/{ticker}";
-                json = await HttpConverter.ConvertHttpMessage(await _httpClient.GetAsync(uri));
-                System.Console.WriteLine(json + "<--------jsonnnnnn");
-                if (json == "") return new List<ArticleDTO>();
-                var jarr = JArray.Parse(json);
-                return jarr.ToObject<List<ArticleDTO>>();
+                try
+                {
+                    uri = $"/api/articles/{ticker}";
+                    json = await HttpConverter.ConvertHttpMessage(await _httpClient.GetAsync(uri));
+                    if (json == "") return new List<ArticleDTO>();
+                    return JArrayParser.Parse<ArticleDTO>(json);
+                }
+                catch
+                {
+                    return new List<ArticleDTO>();
+                }
             }
         }
     }

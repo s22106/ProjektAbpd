@@ -34,6 +34,12 @@ namespace Server.Services.Providers
             });
         }
 
+        public async Task<bool> CheckIfUserHasWatchlist()
+        {
+            var userId = _accessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return await _context.UserStocks.AnyAsync(e => e.UserId == userId);
+        }
+
         public async Task<List<StockDetailsDTO>> GetWatchlistStocksUser()
         {
             var userId = _accessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);

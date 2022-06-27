@@ -32,11 +32,11 @@ namespace Server.Controllers
         [HttpGet("{ticker}")]
         public async Task<IActionResult> GetArticlesForStock(string ticker)
         {
-            if (!await _sharedService.CheckIfStockExists(ticker)) return NoContent();
+            if (!await _sharedService.CheckIfStockExists(ticker)) return NotFound("Stock does not exist in database");
 
             var stockId = await _stockService.GetStockIdByTicker(ticker);
 
-            if (!await _articleService.CheckIfArticlesExist(stockId)) return NoContent();
+            if (!await _articleService.CheckIfArticlesExist(stockId)) return NotFound("Stock does not have any saved articles");
 
             var body = await _articleService.GetArticlesById(stockId);
 

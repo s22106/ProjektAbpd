@@ -40,9 +40,16 @@ namespace ProjektAbpd.Client.Services
             }
             catch (HttpRequestException)
             {
-                uri = $"/api/stocks/{ticker}";
-                json = await HttpConverter.ConvertHttpMessage(await _httpClient.GetAsync(uri));
-                return JObject.Parse(json).ToObject<StockDetailsDTO>();
+                try
+                {
+                    uri = $"/api/stocks/{ticker}";
+                    json = await HttpConverter.ConvertHttpMessage(await _httpClient.GetAsync(uri));
+                    return JObject.Parse(json).ToObject<StockDetailsDTO>();
+                }
+                catch (HttpRequestException)
+                {
+                    return null;
+                }
             }
         }
 
@@ -57,10 +64,17 @@ namespace ProjektAbpd.Client.Services
             }
             catch (HttpRequestException)
             {
-                uri = $"/api/stocks/{ticker}/all";
-                json = await HttpConverter.ConvertHttpMessage(await _httpClient.GetAsync(uri));
-                var jarr = JArray.Parse(json);
-                return jarr.ToObject<List<Stock>>();
+                try
+                {
+                    uri = $"/api/stocks/{ticker}/all";
+                    json = await HttpConverter.ConvertHttpMessage(await _httpClient.GetAsync(uri));
+                    var jarr = JArray.Parse(json);
+                    return jarr.ToObject<List<Stock>>();
+                }
+                catch
+                {
+                    return new List<Stock>();
+                }
             }
         }
     }

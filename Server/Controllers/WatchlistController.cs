@@ -30,7 +30,7 @@ namespace Server.Controllers
         [HttpGet("")]
         public async Task<ActionResult<List<StockDetailsDTO>>> GetUserWatchlist()
         {
-
+            if (!await _watchlistService.CheckIfUserHasWatchlist()) { return NotFound("User does not have watchlist created"); }
             var body = await _watchlistService.GetWatchlistStocksUser();
             return Ok(body);
         }

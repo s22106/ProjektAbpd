@@ -5,6 +5,7 @@
 @inject IStockService stockService
 @inject IPriceService priceService
 @inject IArticleService articlesService
+@inject IJSRuntime js
 
 <style>
     .primary_exchange {
@@ -32,7 +33,8 @@
 </SfAutoComplete>
 @if (selectedStock is not null && stockPrices is not null)
 {
-    <StockDetails stock="@selectedStock" stockPrices="@stockPrices" navigator="@navigator" Articles="@articles" />
+    <StockDetails @ref="StockDetailsObj" stock="@selectedStock" stockPrices="@stockPrices" navigator="@navigator"
+    Articles="@articles" />
 }
 else
 {
@@ -87,17 +89,25 @@ else
     public List<PriceDTO> stockPrices { get; set; }
     public List<ArticleDTO> articles { get; set; }
     public StockDetailsDTO selectedStock { get; set; }
+    StockDetails StockDetailsObj;
     SfAutoComplete<string, Stock> AutoCompleteObj;
     public async void GetDetails(SelectEventArgs<Stock> args)
     {
         selectedStock = await stockService.GetStockDetailsByTicker(args.ItemData.ticker);
-        stockPrices = await priceService.GetPricesForStock(args.ItemData.ticker);
-        articles = await articlesService.GetArticlesByTicker(args.ItemData.ticker);
-        AddKeyToImg();
-        await stockService.AddStockToDatabase(selectedStock);
-        await priceService.AddStockPricesToDatabase(stockPrices, selectedStock.ticker);
-        await articlesService.AddArticlesToDatabase(articles, selectedStock.ticker);
-        StateHasChanged();
+        if (selectedStock is not null)
+        {
+            stockPrices = await priceService.GetPricesForStock(args.ItemData.ticker);
+            articles = await articlesService.GetArticlesByTicker(args.ItemData.ticker);
+            AddKeyToImg();
+            await stockService.AddStockToDatabase(selectedStock);
+            await priceService.AddStockPricesToDatabase(stockPrices, selectedStock.ticker);
+            await articlesService.AddArticlesToDatabase(articles, selectedStock.ticker);
+            StateHasChanged();
+        }
+        else
+        {
+            Show();
+        }
     }
     public async void Type(FilteringEventArgs args)
     {
@@ -118,5 +128,10 @@ else
         {
             selectedStock.branding.logo_url += "?apiKey=3hZzmHuqOO0DqsFAtAR8Uva4sLW1tsHu";
         }
+    }
+
+    public async void Show()
+    {
+        await js.InvokeVoidAsync("showMessage");
     }
 }

@@ -11,5 +11,6 @@ namespace Server.Services
         public Task<List<StockDetailsDTO>> GetWatchlistStocksUser();
         public Task AddStockToWatchlist(StockDetailsDTO stock);
         public Task RemoveStockFromWatchlist(string ticker);
+        public Task<bool> CheckIfUserHasWatchlist();
     }
 }

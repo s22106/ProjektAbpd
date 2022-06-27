@@ -45,7 +45,7 @@ namespace Server.Controllers
         {
             if (!await _sharedService.CheckIfStockExists(ticker))
             {
-                return NotFound();
+                return NotFound("Stock does not exist in database");
             }
 
             return await _stockService.GetStockByTicker(ticker);
@@ -59,7 +59,7 @@ namespace Server.Controllers
             }
             if (await _sharedService.CheckIfStockExists(stock.ticker))
             {
-                return NoContent();
+                return NotFound("Stock does not exist in database");
             }
 
             await _sharedService.CreateAsync(new DbStock
@@ -82,7 +82,7 @@ namespace Server.Controllers
         {
             if (!await _sharedService.CheckIfStockExists(ticker))
             {
-                return NotFound();
+                return NotFound("Stock does not exist in database");
             }
             var stockId = await _stockService.GetStockIdByTicker(ticker);
 

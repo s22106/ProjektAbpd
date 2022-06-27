@@ -8,6 +8,7 @@ using ProjektAbpd.Shared.Models.DTOs;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ProjektAbpd.Client.Helper;
+using Client.Helper;
 
 namespace ProjektAbpd.Client.Services
 {
@@ -36,10 +37,16 @@ namespace ProjektAbpd.Client.Services
 
         public async Task<List<StockDetailsDTO>> RequestUserWatchlist()
         {
-            var uri = $"/api/watchlist";
-            string json = await HttpConverter.ConvertHttpMessage(await _httpClient.GetAsync(uri));
-            var jarr = JArray.Parse(json);
-            return jarr.ToObject<List<StockDetailsDTO>>();
+            try
+            {
+                var uri = $"/api/watchlist";
+                string json = await HttpConverter.ConvertHttpMessage(await _httpClient.GetAsync(uri));
+                return JArrayParser.Parse<StockDetailsDTO>(json);
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }
