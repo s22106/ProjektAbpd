@@ -8,18 +8,18 @@
                 <ContentTemplate>
                     <div class="info-container">
                         <div class="grid-component">
-                            <p>@stock.name (@stock.ticker)</p>
+                            <p class="stock-info">@stock.name (@stock.ticker)</p>
                             @if (stock.homepage_url != null)
                             {
-                                <p>Homepage: @stock.homepage_url</p>
+                                <p class="stock-info">Homepage: @stock.homepage_url</p>
                             }
                             @if (stock.phone_number != null)
                             {
-                                <p>Phone number: @stock.phone_number</p>
+                                <p class="stock-info">Phone number: @stock.phone_number</p>
                             }
                             @if (stock.phone_number != null)
                             {
-                                <p>Category: @stock.sic_description</p>
+                                <p class="stock-info">Category: @stock.sic_description</p>
                             }
                         </div>
                         <div class="img-container">
@@ -70,15 +70,18 @@
                 <ContentTemplate>
                     <div class="article-container">
                         <ul>
-                            @for (int i = 0; i < Articles.Count; i++)
+                            @for (int i = 0; i < 5; i++)
                             {
-                                <li>
-                                    <article>
-                                        <h5><a href="@Articles[i].article_url">@Articles[i].title</a></h5>
-                                        <img class="article-img" src="@Articles[i].image_url" alt="IMG" />
-                                        <p class="article-text">@Articles[i].description</p>
-                                    </article>
-                                </li>
+                                if (i == Articles.Count)
+                                {
+                                    <li>
+                                        <article>
+                                            <h5><a href="@Articles[i].article_url">@Articles[i].title</a></h5>
+                                            <img class="article-img" src="@Articles[i].image_url" alt="IMG" />
+                                            <p class="article-text">@Articles[i].description</p>
+                                        </article>
+                                    </li>
+                                }
                             }
                         </ul>
                     </div>
@@ -89,12 +92,36 @@
 </div>
 
 <style>
+    .grid-component {
+        width: fit-content;
+        max-width: 450px;
+    }
+
+    p.stock-info {
+        font-weight: 800;
+        font-size: 16px;
+        margin: 5px 0px 5px 5px;
+    }
+
+    .info-container {
+        display: flex;
+        10px
+    }
+
+    .img-container {
+        display: initial;
+        position: absolute;
+        right: 0;
+        margin: 10px;
+    }
+
     .layout-container {
         margin-top: 20px;
         padding-top: 20px;
     }
 
     .button-container {
+        height: 100%;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -103,9 +130,21 @@
     .e-custom-watchlist {
         width: 100px;
         aspect-ratio: 2;
-        border-radius: 12px;
+        border-radius: 0px;
         margin-left: 20px;
         margin-right: 20px;
+        background: rgb(6, 2, 80);
+        background: linear-gradient(150deg, rgba(6, 2, 80, 1) 0%, rgba(49, 9, 121, 1) 35%, rgba(186, 0, 255, 1) 100%);
+    }
+
+    .e-custom-watchlist:hover {
+        width: 100px;
+        aspect-ratio: 2;
+        border-radius: 0px;
+        margin-left: 20px;
+        margin-right: 20px;
+        background: rgb(11, 4, 136);
+        background: linear-gradient(150deg, rgba(11, 4, 136, 1) 0%, rgba(64, 1, 176, 1) 35%, rgba(216, 0, 255, 1) 100%);
     }
 
     .e-custom-add {
@@ -114,18 +153,31 @@
         border-radius: 50%;
         margin-left: 20px;
         margin-right: 20px;
+        background: rgb(6, 2, 80);
+        background: linear-gradient(150deg, rgba(6, 2, 80, 1) 0%, rgba(49, 9, 121, 1) 35%, rgba(186, 0, 255, 1) 100%);
+    }
+
+    .e-custom-add:hover {
+        width: 50px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        margin-left: 20px;
+        margin-right: 20px;
+        background: rgb(11, 4, 136);
+        background: linear-gradient(150deg, rgba(11, 4, 136, 1) 0%, rgba(64, 1, 176, 1) 35%, rgba(216, 0, 255, 1) 100%);
     }
 
     .e-dashboardlayout.e-control .e-panel {
         border: 4px solid;
-        border-color: rgba(121, 39, 126, 0.3);
+        border-color: #421085;
         box-shadow: none;
         border-radius: 0px;
     }
 
     .e-dashboardlayout.e-control .e-panel:hover {
         border: 4px solid;
-        border-color: rgba(60, 63, 198, 0.53);
+        border-color: #670299;
+        box-shadow: none;
         border-radius: 0px;
     }
 
@@ -133,14 +185,36 @@
         width: 150px;
         height: auto;
         float: left;
+        margin-right: 5px;
     }
 
     li {
-        height: 200px;
+        height: fit-content;
+    }
+
+    article {
+        min-height: 180px;
+    }
+
+    a {
+        font-size: 16px;
+        font-weight: 700;
+        color: #11011c;
+    }
+
+    a:hover {
+        font-size: 16px;
+        font-weight: 700;
+        color: #23013b;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 20px;
     }
 
     .icon {
-        height: 80px;
+        height: 180px;
         width: auto;
     }
 

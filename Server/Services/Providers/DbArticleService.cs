@@ -42,7 +42,8 @@ namespace Server.Services.Providers
                 description = a.Article.Description,
                 image_url = a.Article.ImageUrl,
                 article_url = a.ArticleUrl
-            }).ToListAsync();
+            }).Take(5)
+            .ToListAsync();
         }
     }
 }

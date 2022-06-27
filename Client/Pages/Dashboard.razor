@@ -14,7 +14,7 @@
 </style>
 
 <SfAutoComplete @ref="AutoCompleteObj" TValue="string" TItem="Stock" Placeholder="e.g TSL" AllowFiltering="true"
-    DataSource="@stocks" Width="400px">
+    DataSource="@stocks" Width="400px" style="border: 2px solid #5b12b0;">
     <AutoCompleteTemplates TItem="Stock">
         <ItemTemplate>
             <span class="item">
@@ -70,6 +70,29 @@ else
 
     .head .ticker {
         text-indent: 16px;
+    }
+
+    .e-custom-watchlist {
+        border-radius: 0px;
+        background: rgb(6, 2, 80);
+        background: linear-gradient(150deg, rgba(6, 2, 80, 1) 0%, rgba(49, 9, 121, 1) 35%, rgba(186, 0, 255, 1) 100%);
+    }
+
+    .e-custom-watchlist:hover {
+        border-radius: 0px;
+        background: rgb(11, 4, 136);
+        background: linear-gradient(150deg, rgba(11, 4, 136, 1) 0%, rgba(64, 1, 176, 1) 35%, rgba(216, 0, 255, 1) 100%);
+    }
+
+    .e-input-group:not(.e-disabled):active:not(.e-success):not(.e-warning):not(.e-error),
+    .e-input-group.e-control-wrapper:not(.e-disabled):active:not(.e-success):not(.e-warning):not(.e-error) {
+        box-shadow: 0 0 0 4px rgba(76, 1, 128, .15);
+    }
+
+    .e-input-group:not(.e-disabled):active:not(.e-success):not(.e-warning):not(.e-error),
+    .e-input-group.e-control-wrapper:not(.e-disabled):active:not(.e-success):not(.e-warning):not(.e-error) {
+        border-color: #4c0180;
+        box-shadow: 0 0 0 4px rgba(13, 110, 253, .15);
     }
 </style>
 
